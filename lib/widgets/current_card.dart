@@ -12,7 +12,8 @@ class CurrentCard extends StatelessWidget {
       height: 210.0,
       padding: EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 17, 23, 209),
+        color: const Color.fromARGB(255, 2, 8, 190),
+        // color: const Color.fromARGB(255, 4, 7, 88),
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(
