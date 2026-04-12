@@ -1,40 +1,44 @@
-// Transaction model class
 class Transaction {
-  // ตัวแปรที่แมปกับชื่อคอลัมน์ใน table
   String? id;
-  double? amount;
-  String? type;
-  String? catId;
-  String? userId;
+  double amount;
+  String type;
+  String catId;
+  String userId;
   String? imageUrl;
+  DateTime? createdAt;
 
-  // construct
   Transaction({
     this.id,
-    this.amount,
-    this.type,
-    this.catId,
-    this.userId,
+    required this.amount,
+    required this.type,
+    required this.catId,
+    required this.userId,
     this.imageUrl,
+    this.createdAt,
   });
 
-  // แปลงข้อมูลจาก Server/Cloud ซึ่งเป็นข้อมูล JSON มาเป็นข้อมูลที่จะใช้ในแอป (fromJson)
-  factory Transaction.fromJson(Map<String, dynamic> json) => Transaction(
-        id: json['id'],
-        amount: json['amount'],
-        type: json['type'],
-        catId: json['cat_id'],
-        userId: json['user_id'],
-        imageUrl: json['image_url'],
-      );
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    return Transaction(
+      id: json['id'],
+      amount: (json['amount'] as num).toDouble(),
+      type: json['type'],
+      catId: json['cat_id'],
+      userId: json['user_id'],
+      imageUrl: json['image_url'],
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : null,
+    );
+  }
 
-  // แปลงข้อมูลในแอปเป็น JSON เพื่อส่งไปยัง Server/Cloud (toJson)
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'amount': amount,
-        'type': type,
-        'cat_id': catId,
-        'user_id': userId,
-        'image_url': imageUrl,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'amount': amount,
+      'type': type,
+      'cat_id': catId,
+      'user_id': userId,
+      'image_url': imageUrl,
+    };
+  }
 }

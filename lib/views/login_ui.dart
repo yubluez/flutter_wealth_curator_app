@@ -1,9 +1,10 @@
-// ignore_for_file: sort_child_properties_last
+// ignore_for_file: use_build_context_synchronously, sort_child_properties_last
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_wealth_curator_app/views/home_ui.dart';
 import 'package:flutter_wealth_curator_app/views/signup_ui.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginUi extends StatefulWidget {
   const LoginUi({super.key});
@@ -13,12 +14,47 @@ class LoginUi extends StatefulWidget {
 }
 
 class _LoginUiState extends State<LoginUi> {
+  final emailCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+
+  bool isLoading = false;
+
+  Future login() async {
+    if (emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('กรุณากรอกข้อมูลให้ครบ')),
+      );
+      return;
+    }
+    try {
+      setState(() => isLoading = true);
+
+      await Supabase.instance.client.auth.signInWithPassword(
+        email: emailCtrl.text.trim(),
+        password: passwordCtrl.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomeUi()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('อีเมลหรือรหัสผ่านไม่ถูกต้อง')),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
+        padding: EdgeInsets.symmetric(horizontal: 40),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -53,6 +89,7 @@ class _LoginUiState extends State<LoginUi> {
               ),
               SizedBox(height: 10),
               TextField(
+                controller: emailCtrl,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   hintText: 'กรุณากรอกอีเมล',
@@ -76,6 +113,7 @@ class _LoginUiState extends State<LoginUi> {
               ),
               SizedBox(height: 10),
               TextField(
+                controller: passwordCtrl,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'กรุณากรอกรหัสผ่าน',
@@ -87,22 +125,7 @@ class _LoginUiState extends State<LoginUi> {
               SizedBox(height: 40),
               // ปุ่มเข้าสู่ระบบ
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomeUi(),
-                    ),
-                  );
-                },
-                child: Text(
-                  'เข้าสู่ระบบ',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                onPressed: isLoading ? null : login,
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 55),
                   shape: RoundedRectangleBorder(
@@ -110,6 +133,16 @@ class _LoginUiState extends State<LoginUi> {
                   ),
                   backgroundColor: const Color.fromARGB(255, 11, 13, 145),
                 ),
+                child: isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        'เข้าสู่ระบบ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
               ),
               SizedBox(height: 20),
               RichText(

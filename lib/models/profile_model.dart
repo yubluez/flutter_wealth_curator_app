@@ -1,28 +1,32 @@
-// Profile model class
 class Profile {
-  // ตัวแปรที่แมปกับชื่อคอลัมน์ใน table
   String? id;
   String? name;
   String? avatarUrl;
+  DateTime? createdAt;
 
-  // construct
   Profile({
     this.id,
     this.name,
     this.avatarUrl,
+    this.createdAt,
   });
 
-  // แปลงข้อมูลจาก Server/Cloud ซึ่งเป็นข้อมูล JSON มาเป็นข้อมูลที่จะใช้ในแอป (fromJson)
-  factory Profile.fromJson(Map<String, dynamic> json) => Profile(
-        id: json['id'],
-        name: json['name'],
-        avatarUrl: json['avatar_url'],
-      );
-      
-  // แปลงข้อมูลในแอปเป็น JSON เพื่อส่งไปยัง Server/Cloud (toJson)
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'avatar_url': avatarUrl,
-      };
+  factory Profile.fromJson(Map<String, dynamic> json) {
+    return Profile(
+      id: json['id'],
+      name: json['name'],
+      avatarUrl: json['avatar_url'],
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'avatar_url': avatarUrl,
+    };
+  }
 }

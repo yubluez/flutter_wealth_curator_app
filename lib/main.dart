@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wealth_curator_app/views/home_ui.dart';
-import 'package:flutter_wealth_curator_app/views/login_ui.dart';
 import 'package:flutter_wealth_curator_app/views/splash_screen_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,7 +29,7 @@ class _FlutterWealthCuratorAppState extends State<FlutterWealthCuratorApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeUi(),
+      home: SplashScreenUi(),
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,

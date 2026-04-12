@@ -1,6 +1,10 @@
+// ignore_for_file: sort_child_properties_last, use_build_context_synchronously
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_wealth_curator_app/views/home_ui.dart';
 import 'package:flutter_wealth_curator_app/views/login_ui.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignupUi extends StatefulWidget {
   const SignupUi({super.key});
@@ -10,6 +14,58 @@ class SignupUi extends StatefulWidget {
 }
 
 class _SignupUiState extends State<SignupUi> {
+  final emailCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+  final nameCtrl = TextEditingController();
+
+  bool isLoading = false;
+
+  Future signup() async {
+    if (nameCtrl.text.isEmpty ||
+        emailCtrl.text.isEmpty ||
+        passwordCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('กรุณากรอกข้อมูลให้ครบ')),
+      );
+      return;
+    }
+
+    try {
+      setState(() => isLoading = true);
+
+      final res = await Supabase.instance.client.auth.signUp(
+        email: emailCtrl.text.trim(),
+        password: passwordCtrl.text.trim(),
+      );
+
+      if (res.user != null) {
+        await Supabase.instance.client.from('profile_tb').insert({
+          'id': res.user!.id,
+          'name': nameCtrl.text.trim(),
+        });
+      }
+
+      if (!mounted) return;
+
+      // ✅ ไปหน้า login แบบชัวร์
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginUi()),
+        (route) => false,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('สมัครสมาชิกสำเร็จ')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('สมัครไม่สำเร็จ')),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,20 +78,27 @@ class _SignupUiState extends State<SignupUi> {
             children: [
               Image.asset(
                 'assets/images/logo.png',
-                width: 150,
-                height: 150,
+                width: 130,
+                height: 130,
                 fit: BoxFit.cover,
               ),
               SizedBox(height: 20),
               Text(
-                'Wealth Curator',
+                'สร้างบัญชีผู้ใช้ใหม่!',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 20),
+              Text(
+                'กรอกข้อมูลด้านล่างเพื่อใช้งานแอป',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: 40),
               // Username
               Align(
                 alignment: Alignment.centerLeft,
@@ -50,7 +113,7 @@ class _SignupUiState extends State<SignupUi> {
               ),
               SizedBox(height: 10),
               TextField(
-                keyboardType: TextInputType.emailAddress,
+                controller: nameCtrl,
                 decoration: InputDecoration(
                   hintText: 'กรุณากรอกชื่อผู้ใช้',
                   border: OutlineInputBorder(
@@ -73,6 +136,7 @@ class _SignupUiState extends State<SignupUi> {
               ),
               SizedBox(height: 10),
               TextField(
+                controller: emailCtrl,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   hintText: 'กรุณากรอกอีเมล',
@@ -96,6 +160,7 @@ class _SignupUiState extends State<SignupUi> {
               ),
               SizedBox(height: 10),
               TextField(
+                controller: passwordCtrl,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'กรุณากรอกรหัสผ่าน',
@@ -104,48 +169,10 @@ class _SignupUiState extends State<SignupUi> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-              // Confirm Password
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'ยืนยันรหัสผ่าน',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'กรุณากรอกยืนยันรหัสผ่าน',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
               SizedBox(height: 40),
               // ปุ่มสมัครสมาชิก
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginUi(),
-                    ),
-                  );
-                },
-                child: Text(
-                  'สมัครสมาชิก',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                onPressed: isLoading ? null : signup,
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 55),
                   shape: RoundedRectangleBorder(
@@ -153,6 +180,16 @@ class _SignupUiState extends State<SignupUi> {
                   ),
                   backgroundColor: const Color.fromARGB(255, 11, 13, 145),
                 ),
+                child: isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        'สมัครสมาชิก',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
               ),
               SizedBox(height: 20),
               RichText(

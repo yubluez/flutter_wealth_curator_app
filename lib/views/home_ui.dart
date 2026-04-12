@@ -8,6 +8,7 @@ import 'package:flutter_wealth_curator_app/widgets/circular_widget.dart';
 import 'package:flutter_wealth_curator_app/widgets/current_card.dart';
 import 'package:flutter_wealth_curator_app/widgets/linear_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeUi extends StatefulWidget {
   const HomeUi({super.key});
@@ -18,6 +19,7 @@ class HomeUi extends StatefulWidget {
 
 class _HomeUiState extends State<HomeUi> {
   int _currentIndex = 0;
+  double balance = 0;
 
   late final List<Widget> _pages = [
     homePage(),
@@ -33,6 +35,34 @@ class _HomeUiState extends State<HomeUi> {
     'ประวัติรายการ',
     'รายงาน',
   ];
+
+  //-------------------------------------------------
+  Future load() async {
+    final user = Supabase.instance.client.auth.currentUser;
+
+    final data = await Supabase.instance.client
+        .from('transactions_tb')
+        .select()
+        .eq('user_id', user!.id);
+
+    double total = 0;
+
+    for (var t in data) {
+      if (t['type'] == 'income') {
+        total += t['amount'];
+      } else {
+        total -= t['amount'];
+      }
+    }
+
+    setState(() => balance = total);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    load();
+  }
 
   @override
   Widget build(BuildContext context) {

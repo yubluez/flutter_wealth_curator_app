@@ -1,5 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_wealth_curator_app/views/home_ui.dart';
+import 'package:flutter_wealth_curator_app/views/login_ui.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreenUi extends StatefulWidget {
   const SplashScreenUi({super.key});
@@ -9,20 +13,24 @@ class SplashScreenUi extends StatefulWidget {
 }
 
 class _SplashScreenUiState extends State<SplashScreenUi> {
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   Future.delayed(Duration(seconds: 3), () {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => HomeUi(),
-  //         ),
-  //     );
-  //   }
-  //   );
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Future.delayed(Duration(seconds: 3), () {
+      if (!mounted) return; // ✅ ป้องกัน error
+      
+      final user = Supabase.instance.client.auth.currentUser;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => user == null ? LoginUi() : HomeUi(),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
