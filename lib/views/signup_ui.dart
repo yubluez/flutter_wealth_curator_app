@@ -33,13 +33,16 @@ class _SignupUiState extends State<SignupUi> {
     try {
       setState(() => isLoading = true);
 
-      final res = await Supabase.instance.client.auth.signUp(
+      final supabase = Supabase.instance.client;
+
+      final res = await supabase.auth.signUp(
         email: emailCtrl.text.trim(),
         password: passwordCtrl.text.trim(),
       );
 
+      // ✅ insert profile ได้เลย (ไม่ต้อง login ก่อนแล้ว)
       if (res.user != null) {
-        await Supabase.instance.client.from('profile_tb').insert({
+        await supabase.from('profile_tb').insert({
           'id': res.user!.id,
           'name': nameCtrl.text.trim(),
         });
@@ -47,19 +50,21 @@ class _SignupUiState extends State<SignupUi> {
 
       if (!mounted) return;
 
-      // ✅ ไปหน้า login แบบชัวร์
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('สมัครสำเร็จ')),
+      );
+
+      // 👉 ไป login
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const LoginUi()),
         (route) => false,
       );
+    } catch (e) {
+      print('ERROR: $e');
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('สมัครสมาชิกสำเร็จ')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('สมัครไม่สำเร็จ')),
+        SnackBar(content: Text(e.toString())),
       );
     } finally {
       setState(() => isLoading = false);

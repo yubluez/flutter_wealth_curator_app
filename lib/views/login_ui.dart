@@ -22,10 +22,11 @@ class _LoginUiState extends State<LoginUi> {
   Future login() async {
     if (emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('กรุณากรอกข้อมูลให้ครบ')),
+        const SnackBar(content: Text('กรุณากรอกข้อมูลให้ครบ')),
       );
       return;
     }
+
     try {
       setState(() => isLoading = true);
 
@@ -38,15 +39,22 @@ class _LoginUiState extends State<LoginUi> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => HomeUi()),
+        MaterialPageRoute(builder: (_) => const HomeUi()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('อีเมลหรือรหัสผ่านไม่ถูกต้อง')),
+        SnackBar(content: Text(e.toString())),
       );
     } finally {
       setState(() => isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,7 +75,7 @@ class _LoginUiState extends State<LoginUi> {
               ),
               SizedBox(height: 20),
               Text(
-                'Wealth Curator',
+                'Welcome Back',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
