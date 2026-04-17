@@ -1,22 +1,19 @@
 class Category {
   String? id;
   String? name;
-  String? type;
-  String? userId;
+  String? color;
 
   Category({
     this.id,
     this.name,
-    this.type,
-    this.userId,
+    this.color,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
       id: json['id'],
       name: json['name'],
-      type: json['type'],
-      userId: json['user_id'],
+      color: json['color'],
     );
   }
 
@@ -24,8 +21,7 @@ class Category {
     return {
       'id': id,
       'name': name,
-      'type': type,
-      'user_id': userId,
+      'color': color,
     };
   }
 }

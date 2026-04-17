@@ -4,9 +4,9 @@ import 'package:flutter_wealth_curator_app/views/add_transactions_ui.dart';
 import 'package:flutter_wealth_curator_app/views/category_ui.dart';
 import 'package:flutter_wealth_curator_app/views/history_ui.dart';
 import 'package:flutter_wealth_curator_app/views/profile_ui.dart';
-import 'package:flutter_wealth_curator_app/widgets/circular_widget.dart';
-import 'package:flutter_wealth_curator_app/widgets/current_card.dart';
-import 'package:flutter_wealth_curator_app/widgets/linear_widget.dart';
+import 'package:flutter_wealth_curator_app/widgets/home_ui/circular_widget.dart';
+import 'package:flutter_wealth_curator_app/widgets/home_ui/current_card.dart';
+import 'package:flutter_wealth_curator_app/widgets/home_ui/linear_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

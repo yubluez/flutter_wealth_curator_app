@@ -3,18 +3,20 @@ class Transaction {
   double amount;
   String type;
   String catId;
-  String userId;
   String? imageUrl;
   DateTime? createdAt;
+  String? note;
+  String? userId;
 
   Transaction({
     this.id,
     required this.amount,
     required this.type,
     required this.catId,
-    required this.userId,
     this.imageUrl,
     this.createdAt,
+    this.note,
+    this.userId,
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
@@ -23,22 +25,24 @@ class Transaction {
       amount: (json['amount'] as num).toDouble(),
       type: json['type'],
       catId: json['cat_id'],
-      userId: json['user_id'],
       imageUrl: json['image_url'],
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : null,
+      note: json['note'],
+      userId: json['user_id'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'amount': amount,
       'type': type,
       'cat_id': catId,
-      'user_id': userId,
       'image_url': imageUrl,
+      'created_at': createdAt?.toIso8601String(),
+      'note': note,
+      'user_id': userId
     };
   }
 }

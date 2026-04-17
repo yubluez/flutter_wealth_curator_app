@@ -10,12 +10,10 @@ class SupabaseService {
 
   // ================= CATEGORY =================
   Future<List<Category>> getCategories() async {
-    final userId = supabase.auth.currentUser!.id;
-
     final data = await supabase
         .from('category_tb')
         .select()
-        .eq('user_id', userId);
+        .order('name', ascending: true);
 
     return (data as List).map((e) => Category.fromJson(e)).toList();
   }
@@ -34,12 +32,8 @@ class SupabaseService {
   }
 
   Future insertTransaction(Transaction transaction) async {
-    final userId = supabase.auth.currentUser!.id;
-
-    await supabase.from('transactions_tb').insert({
-      ...transaction.toJson(),
-      'user_id': userId,
-    });
+    // มั่นใจได้เลยว่าใน transaction.toJson() มี user_id มาแล้วจากหน้า UI
+    await supabase.from('transactions_tb').insert(transaction.toJson());
   }
 
   Future updateTransaction(String id, Transaction transaction) async {
@@ -69,10 +63,7 @@ class SupabaseService {
   }
 
   Future updateProfile(String id, Profile profile) async {
-    await supabase
-        .from('profile_tb')
-        .update(profile.toJson())
-        .eq('id', id);
+    await supabase.from('profile_tb').update(profile.toJson()).eq('id', id);
   }
 
   // ================= STORAGE =================
@@ -82,7 +73,9 @@ class SupabaseService {
 
     final path = '$folder/$fileName';
 
-    await supabase.storage.from('images_bk').upload(path, file);
+    await supabase.storage
+        .from('images_bk')
+        .upload(path, file, fileOptions: const FileOptions(upsert: true));
 
     return supabase.storage.from('images_bk').getPublicUrl(path);
   }
