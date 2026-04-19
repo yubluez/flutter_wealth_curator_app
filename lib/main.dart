@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_wealth_curator_app/views/home_ui.dart';
 import 'package:flutter_wealth_curator_app/views/splash_screen_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
