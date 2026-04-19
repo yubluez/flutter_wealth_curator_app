@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_wealth_curator_app/models/category_model.dart'; // 🔹 เพิ่ม import
+import 'package:flutter_wealth_curator_app/models/transaction_model.dart';
+import 'package:flutter_wealth_curator_app/services/supabase_service.dart';
+import 'package:flutter_wealth_curator_app/views/update_delete_ui.dart';
+import 'package:intl/intl.dart';
 
 class HistoryUi extends StatefulWidget {
   const HistoryUi({super.key});
@@ -8,8 +13,191 @@ class HistoryUi extends StatefulWidget {
 }
 
 class _HistoryUiState extends State<HistoryUi> {
+  final SupabaseService service = SupabaseService();
+  String selectedFilter = 'All';
+  List<Transaction> allTransactions = [];
+  List<Category> categories = []; // 🔹 เพิ่มตัวแปรเก็บหมวดหมู่
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    setState(() => isLoading = true);
+    // 🔹 ดึงทั้งรายการและหมวดหมู่มาพร้อมกัน
+    final transData = await service.getTransactions();
+    final catsData = await service.getCategories();
+
+    setState(() {
+      allTransactions = transData;
+      categories = catsData;
+      isLoading = false;
+    });
+  }
+
+  // 🔹 ฟังก์ชันช่วยหาชื่อหมวดหมู่จาก catId
+  String getCategoryName(String catId) {
+    try {
+      final category = categories.firstWhere((c) => c.id == catId);
+      return category.name ?? 'ทั่วไป';
+    } catch (e) {
+      return 'ทั่วไป';
+    }
+  }
+
+  IconData getCategoryIcon(String? categoryName) {
+    switch (categoryName) {
+      case 'ช้อปปิ้ง':
+        return Icons.shopping_bag;
+      case 'เดินทาง':
+        return Icons.directions_car;
+      case 'ที่พัก':
+        return Icons.hotel;
+      case 'บันเทิง':
+        return Icons.movie;
+      case 'บิล':
+        return Icons.receipt;
+      case 'สุขภาพ':
+        return Icons.health_and_safety;
+      case 'อาหาร':
+        return Icons.restaurant;
+      case 'การศึกษา':
+        return Icons.school;
+      default:
+        return Icons.receipt_long; // ไอคอนเริ่มต้นถ้าไม่ตรงกับหมวดใดเลย
+    }
+  }
+
+  List<Transaction> get filteredTransactions {
+    if (selectedFilter == 'Income') {
+      return allTransactions.where((t) => t.type == 'income').toList();
+    } else if (selectedFilter == 'Expenses') {
+      return allTransactions.where((t) => t.type == 'expense').toList();
+    }
+    return allTransactions;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: Scaffold(
+        backgroundColor: Colors.grey[100],
+        body: Column(
+          children: [
+            _buildFilterBar(),
+            Expanded(
+              child: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : _buildTransactionList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: ['All', 'Income', 'Expenses'].map((filter) {
+        bool isSel = selectedFilter == filter;
+        return GestureDetector(
+          onTap: () => setState(() => selectedFilter = filter),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 35, vertical: 10),
+            decoration: BoxDecoration(
+              color: isSel ? Colors.grey[400] : Colors.grey[300],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(filter,
+                style: TextStyle(
+                    fontWeight: isSel ? FontWeight.bold : FontWeight.normal)),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildTransactionList() {
+    if (filteredTransactions.isEmpty) {
+      return Center(child: Text("ไม่มีข้อมูล"));
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.only(top: 20),
+      itemCount: filteredTransactions.length,
+      itemBuilder: (context, index) {
+        final t = filteredTransactions[index];
+
+        // 🔹 1. ค้นหาข้อมูลหมวดหมู่จากลิสต์ categories โดยใช้ catId ของ transaction
+        final category = categories.firstWhere(
+          (c) => c.id == t.catId,
+          orElse: () => Category(name: 'ทั่วไป'), // ค่าเริ่มต้นถ้าหาไม่เจอ
+        );
+
+        // 🔹 2. กำหนดชื่อที่จะแสดง (ถ้าไม่มีโน้ต ให้ใช้ชื่อหมวดหมู่ที่หามาได้)
+        final String displayName = (t.note != null && t.note!.trim().isNotEmpty)
+            ? t.note!
+            : (category.name ?? 'ทั่วไป');
+
+        return GestureDetector(
+          onTap: () async {
+            // ไปหน้าแก้ไข และรอรับผลกลับมาเพื่อ refresh หน้า
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => UpdateDeleteUi(transaction: t)),
+            );
+            loadData();
+          },
+          child: Container(
+            margin: EdgeInsets.only(bottom: 15),
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.grey[100],
+                  // 🔹 3. เรียกใช้ฟังก์ชัน getCategoryIcon โดยส่งชื่อหมวดหมู่ที่ได้จากข้อ 1
+                  child: Icon(
+                    getCategoryIcon(category.name),
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        displayName,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        DateFormat('HH:mm • dd MMM').format(t.createdAt!),
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  '${t.type == 'expense' ? '-' : '+'} ฿${t.amount.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: t.type == 'expense' ? Colors.red : Colors.green,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

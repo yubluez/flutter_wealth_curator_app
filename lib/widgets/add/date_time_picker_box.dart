@@ -21,10 +21,16 @@ class DateTimePickerBox extends StatelessWidget {
           color: Colors.grey[300],
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Text(
-          dateTime == null
-              ? "date / time"
-              : DateFormat('dd MMM yyyy • HH:mm').format(dateTime!),
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today),
+            SizedBox(width: 10),
+            Text(
+              dateTime == null
+                  ? "date / time"
+                  : DateFormat('dd MMM yyyy • HH:mm').format(dateTime!),
+            ),
+          ],
         ),
       ),
     );

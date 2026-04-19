@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_wealth_curator_app/views/home_ui.dart';
 import 'package:flutter_wealth_curator_app/views/login_ui.dart';
+import 'package:flutter_wealth_curator_app/views/main_navigation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreenUi extends StatefulWidget {
@@ -26,7 +26,7 @@ class _SplashScreenUiState extends State<SplashScreenUi> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => user == null ? LoginUi() : HomeUi(),
+          builder: (_) => user == null ? LoginUi() : MainNavigation(),
         ),
       );
     });

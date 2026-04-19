@@ -1,14 +1,16 @@
+// ignore_for_file: use_build_context_synchronously, curly_braces_in_flow_control_structures
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_wealth_curator_app/controllers/add_transaction_controller.dart';
 import 'package:flutter_wealth_curator_app/models/category_model.dart';
 import 'package:flutter_wealth_curator_app/models/transaction_model.dart';
 import 'package:flutter_wealth_curator_app/services/supabase_service.dart';
-import 'package:flutter_wealth_curator_app/widgets/add_transaction/transaction_toggle.dart';
-import 'package:flutter_wealth_curator_app/widgets/add_ui/amount_input.dart';
-import 'package:flutter_wealth_curator_app/widgets/add_ui/category_widget.dart';
-import 'package:flutter_wealth_curator_app/widgets/add_ui/date_time_picker_box.dart';
-import 'package:flutter_wealth_curator_app/widgets/add_ui/image_picker_box.dart';
+import 'package:flutter_wealth_curator_app/widgets/add/transaction_toggle.dart';
+import 'package:flutter_wealth_curator_app/widgets/add/amount_input.dart';
+import 'package:flutter_wealth_curator_app/widgets/add/category_widget.dart';
+import 'package:flutter_wealth_curator_app/widgets/add/date_time_picker_box.dart';
+import 'package:flutter_wealth_curator_app/widgets/add/image_picker_box.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -48,8 +50,7 @@ class _AddTransactionsUiState extends State<AddTransactionsUi> {
   }
 
   Future<void> pickImage() async {
-    final picked =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null) {
       setState(() => file = File(picked.path));
     }
@@ -86,7 +87,14 @@ class _AddTransactionsUiState extends State<AddTransactionsUi> {
   Future<void> save() async {
     if (amountCtrl.text.isEmpty ||
         selectedCategoryId.isEmpty ||
-        selectedDateTime == null) return;
+        selectedDateTime == null)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('กรุณาป้อนข้อมูลให้ครบถ้วน'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
 
     setState(() => isLoading = true);
 
@@ -106,7 +114,11 @@ class _AddTransactionsUiState extends State<AddTransactionsUi> {
       await controller.saveTransaction(transaction);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("บันทึกสำเร็จ")),
+        SnackBar(
+          content: Text("บันทึกสำเร็จ"),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
       );
 
       amountCtrl.clear();
@@ -128,6 +140,7 @@ class _AddTransactionsUiState extends State<AddTransactionsUi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       body: Padding(
         padding: EdgeInsets.all(20),
         child: ListView(
@@ -141,44 +154,55 @@ class _AddTransactionsUiState extends State<AddTransactionsUi> {
                 });
               },
             ),
-
             SizedBox(height: 25),
-
             AmountInput(controller: amountCtrl),
-
             SizedBox(height: 25),
-
             CategoryWidget(
               categories: categories,
               selectedId: selectedCategoryId,
               onSelect: (id) => setState(() => selectedCategoryId = id),
             ),
-
             SizedBox(height: 20),
-
             DateTimePickerBox(
               dateTime: selectedDateTime,
               onTap: pickDateTime,
             ),
-
             SizedBox(height: 20),
-
-            TextField(controller: noteCtrl),
-
+            TextField(
+              controller: noteCtrl,
+              decoration: InputDecoration(
+                hintText: "เพิ่มโน้ต...",
+                prefixIcon: Icon(Icons.edit),
+                filled: true,
+                fillColor: Colors.grey[300],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
             SizedBox(height: 20),
-
             ImagePickerBox(
               file: file,
               onTap: pickImage,
             ),
-
-            SizedBox(height: 20),
-
+            SizedBox(height: 30),
             ElevatedButton(
-              onPressed: isLoading ? null : save,
+              onPressed: isLoading ? null : () => save(),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 55),
+                backgroundColor: Color(0xFF1117D1),
+              ),
               child: isLoading
-                  ? CircularProgressIndicator()
-                  : Text("บันทึก"),
+                  ? CircularProgressIndicator(color: Colors.white)
+                  : Text(
+                      "บันทึกรายการ",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ],
         ),

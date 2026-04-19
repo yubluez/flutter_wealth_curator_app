@@ -125,7 +125,7 @@ class _ProfileUiState extends State<ProfileUi> {
                   padding: EdgeInsets.all(3),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 5),
+                    border: Border.all(color: Color(0xFF1117D1), width: 6),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.2),
@@ -137,9 +137,12 @@ class _ProfileUiState extends State<ProfileUi> {
                   child: CircleAvatar(
                     radius: 70,
                     backgroundColor: Colors.grey[300],
-                    backgroundImage: file != null ? FileImage(file!) : null,
-                    child: file == null
-                        ? Icon(Icons.image, size: 50, color: Colors.black54)
+                    backgroundImage:
+                        (avatarUrl != null && avatarUrl!.isNotEmpty)
+                            ? NetworkImage(avatarUrl!)
+                            : null,
+                    child: (avatarUrl == null || avatarUrl!.isEmpty)
+                        ? Icon(Icons.person, color: Colors.white, size: 25)
                         : null,
                   ),
                 ),
@@ -158,7 +161,7 @@ class _ProfileUiState extends State<ProfileUi> {
                 leading: Icon(Icons.email),
                 title: Text('อีเมล'),
                 subtitle: Text(email),
-              ),  
+              ),
 
               Spacer(),
 
