@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AmountInput extends StatelessWidget {
   final TextEditingController controller;
@@ -8,25 +9,30 @@ class AmountInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      // 🔹 ใช้ IntrinsicWidth เพื่อให้ Row กว้างเท่ากับเนื้อหาที่พิมพ์จริง
-      child: IntrinsicWidth(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "฿",
-              style: TextStyle(
-                fontSize: 28,
-                color: Colors.grey[500],
-              ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize:
+            MainAxisSize.min, // Constrains the Row to its children's size
+        children: [
+          Text(
+            "฿",
+            style: TextStyle(
+              fontSize: 28,
+              color: Colors.grey[500],
             ),
-            SizedBox(width: 10),
-            // 🔹 ใช้ IntrinsicWidth ซ้อนใน TextField เพื่อให้ขยายตามตัวหนังสือ
-            IntrinsicWidth(
+          ),
+          SizedBox(width: 10),
+          // Wrap with Flexible or ConstrainedBox to prevent the overflow
+          Flexible(
+            child: IntrinsicWidth(
               child: TextField(
                 controller: controller,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(10),
+                ],
                 textAlign: TextAlign.left,
                 cursorColor: Color(0xFF1117D1),
                 autofocus: true,
@@ -43,14 +49,13 @@ class AmountInput extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Colors.grey[400],
                   ),
-                  // ลบ Constraints ที่จำกัดพื้นที่ออก
                   isDense: true,
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

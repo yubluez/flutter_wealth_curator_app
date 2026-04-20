@@ -25,9 +25,9 @@ class _MainNavigationState extends State<MainNavigation> {
     _loadUserProfile(); // 🔹 โหลดรูปโปรไฟล์ตั้งแต่เปิดแอป
     _pages = [
       HomeUi(onNavigate: _onNavigate),
-      const AddTransactionsUi(),
-      const HistoryUi(),
-      const CategoryUi(),
+      AddTransactionsUi(),
+      HistoryUi(),
+      CategoryUi(),
     ];
   }
 
@@ -112,6 +112,7 @@ class _MainNavigationState extends State<MainNavigation> {
         children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Color(0xFF1117D1),

@@ -97,9 +97,9 @@ class _CategoryUiState extends State<CategoryUi> {
         DateTime endOfWeek =
             startOfWeek.add(Duration(days: 6, hours: 23, minutes: 59));
 
-        matchDate = t.createdAt!
-                .isAfter(startOfWeek.subtract(Duration(seconds: 1))) &&
-            t.createdAt!.isBefore(endOfWeek.add(Duration(seconds: 1)));
+        matchDate =
+            t.createdAt!.isAfter(startOfWeek.subtract(Duration(seconds: 1))) &&
+                t.createdAt!.isBefore(endOfWeek.add(Duration(seconds: 1)));
       } else if (selectedPeriod == 'เดือน') {
         // ตรวจสอบว่า เดือน และ ปี ตรงกันหรือไม่
         matchDate = t.createdAt!.month == focusedDate.month &&
@@ -113,6 +113,20 @@ class _CategoryUiState extends State<CategoryUi> {
     }).toList();
   }
 
+  // ฟังก์ชันสำหรับการ Refresh ข้อมูลและรีเซ็ตค่า
+  Future<void> _handleRefresh() async {
+    setState(() {
+      // 1. รีเซ็ตฟิลเตอร์เป็นค่าเริ่มต้น
+      selectedPeriod = 'เดือน';
+      focusedDate = DateTime.now();
+      selectedCategory = null;
+      isExpanded = false;
+    });
+
+    // 2. โหลดข้อมูลใหม่จาก Service
+    await loadData();
+  }
+
   double get totalSpent =>
       filteredTransactions.fold(0, (sum, item) => sum + item.amount);
 
@@ -121,45 +135,47 @@ class _CategoryUiState extends State<CategoryUi> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading)
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            PeriodSelector(
-              selectedPeriod: selectedPeriod,
-              onPeriodSelected: (p) => setState(() => selectedPeriod = p),
-            ),
-            SizedBox(height: 20),
-            CategoryChartCard(
-              categoryName: selectedCategory?.name ?? 'ทั้งหมด',
-              dateTitle: formattedDateTitle,
-              totalSpent: totalSpent,
-              currentBudget: currentBudget,
-              categories: categories,
-              selectedCategory: selectedCategory,
-              onDateTap: () => _selectDate(context),
-              onCategorySelected: (cat) =>
-                  setState(() => selectedCategory = cat),
-            ),
-            SizedBox(height: 20),
-            SummaryBar(
-              title:
-                  'สรุปผล $selectedPeriod - ${selectedCategory?.name ?? 'ทั้งหมด'}',
-              totalSpent: totalSpent,
-              currentBudget: currentBudget,
-            ),
-            SizedBox(height: 20),
-            HistoryListCard(
-              transactions: filteredTransactions,
-              isExpanded: isExpanded,
-              onToggleExpand: () => setState(() => isExpanded = !isExpanded),
-            ),
-          ],
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        color: Color(0xFF1117D1),
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              PeriodSelector(
+                selectedPeriod: selectedPeriod,
+                onPeriodSelected: (p) => setState(() => selectedPeriod = p),
+              ),
+              SizedBox(height: 20),
+              CategoryChartCard(
+                categoryName: selectedCategory?.name ?? 'ทั้งหมด',
+                dateTitle: formattedDateTitle,
+                totalSpent: totalSpent,
+                currentBudget: currentBudget,
+                categories: categories,
+                selectedCategory: selectedCategory,
+                onDateTap: () => _selectDate(context),
+                onCategorySelected: (cat) =>
+                    setState(() => selectedCategory = cat),
+              ),
+              SizedBox(height: 20),
+              SummaryBar(
+                title:
+                    'สรุปผล $selectedPeriod - ${selectedCategory?.name ?? 'ทั้งหมด'}',
+                totalSpent: totalSpent,
+                currentBudget: currentBudget,
+              ),
+              SizedBox(height: 20),
+              HistoryListCard(
+                transactions: filteredTransactions,
+                isExpanded: isExpanded,
+                onToggleExpand: () => setState(() => isExpanded = !isExpanded),
+              ),
+            ],
+          ),
         ),
       ),
     );

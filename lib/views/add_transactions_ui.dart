@@ -137,74 +137,97 @@ class _AddTransactionsUiState extends State<AddTransactionsUi> {
     setState(() => isLoading = false);
   }
 
+  Future<void> _handleRefresh() async {
+    // จำลองการโหลดข้อมูลใหม่ (ถ้ามี) หรือจะรีเซ็ตค่าเลยก็ได้
+    await Future.delayed(Duration(milliseconds: 500));
+
+    setState(() {
+      // รีเซ็ตค่า Input ต่างๆ เป็นค่าเริ่มต้น
+      isExpense = true;
+      amountCtrl.clear();
+      noteCtrl.clear();
+      selectedDateTime = null;
+      file = null;
+      selectedCategoryId = "";
+    });
+
+    // โหลด Categories ใหม่จาก Supabase เพื่อให้ข้อมูลเป็นปัจจุบันที่สุด
+    await loadCategories();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: ListView(
-          children: [
-            TransactionToggle(
-              isExpense: isExpense,
-              onChanged: (val) {
-                setState(() {
-                  isExpense = val;
-                  selectedCategoryId = "";
-                });
-              },
-            ),
-            SizedBox(height: 25),
-            AmountInput(controller: amountCtrl),
-            SizedBox(height: 25),
-            CategoryWidget(
-              categories: categories,
-              selectedId: selectedCategoryId,
-              onSelect: (id) => setState(() => selectedCategoryId = id),
-            ),
-            SizedBox(height: 20),
-            DateTimePickerBox(
-              dateTime: selectedDateTime,
-              onTap: pickDateTime,
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: noteCtrl,
-              decoration: InputDecoration(
-                hintText: "เพิ่มโน้ต...",
-                prefixIcon: Icon(Icons.edit),
-                filled: true,
-                fillColor: Colors.grey[300],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        color: Color(0xFF1117D1),
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              TransactionToggle(
+                isExpense: isExpense,
+                onChanged: (val) {
+                  setState(() {
+                    isExpense = val;
+                    selectedCategoryId = "";
+                  });
+                },
+              ),
+              SizedBox(height: 25),
+              AmountInput(controller: amountCtrl),
+              SizedBox(height: 25),
+              CategoryWidget(
+                categories: categories,
+                selectedId: selectedCategoryId,
+                onSelect: (id) => setState(() => selectedCategoryId = id),
+              ),
+              SizedBox(height: 20),
+              DateTimePickerBox(
+                dateTime: selectedDateTime,
+                onTap: pickDateTime,
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: noteCtrl,
+                decoration: InputDecoration(
+                  hintText: "เพิ่มโน้ต...",
+                  prefixIcon: Icon(Icons.edit),
+                  filled: true,
+                  fillColor: Colors.grey[300],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 20),
-            ImagePickerBox(
-              file: file,
-              onTap: pickImage,
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: isLoading ? null : () => save(),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 55),
-                backgroundColor: Color(0xFF1117D1),
+              SizedBox(height: 20),
+              ImagePickerBox(
+                file: file,
+                onTap: pickImage,
               ),
-              child: isLoading
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text(
-                      "บันทึกรายการ",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+              SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: isLoading ? null : () => save(),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 55),
+                  backgroundColor: Color(0xFF1117D1),
+                ),
+                child: isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        "บันทึกรายการ",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

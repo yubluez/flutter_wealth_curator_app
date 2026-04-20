@@ -17,6 +17,7 @@ class ImagePickerBox extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 140,
+        width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.grey[300],
           borderRadius: BorderRadius.circular(12),

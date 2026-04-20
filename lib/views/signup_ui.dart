@@ -75,157 +75,159 @@ class _SignupUiState extends State<SignupUi> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/logo.png',
-                width: 130,
-                height: 130,
-                fit: BoxFit.cover,
-              ),
-              SizedBox(height: 20),
-              Text(
-                'สร้างบัญชีผู้ใช้ใหม่!',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/logo.png',
+                  width: 130,
+                  height: 130,
+                  fit: BoxFit.cover,
                 ),
-              ),
-              Text(
-                'กรอกข้อมูลด้านล่างเพื่อใช้งานแอป',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
+                SizedBox(height: 20),
+                Text(
+                  'สร้างบัญชีผู้ใช้ใหม่!',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              SizedBox(height: 40),
-              // Username
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'ชื่อผู้ใช้',
+                Text(
+                  'กรอกข้อมูลด้านล่างเพื่อใช้งานแอป',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
                 ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: nameCtrl,
-                decoration: InputDecoration(
-                  hintText: 'กรุณากรอกชื่อผู้ใช้',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              // Email
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'อีเมล',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: emailCtrl,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  hintText: 'กรุณากรอกอีเมล',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              // Password
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'รหัสผ่าน',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: passwordCtrl,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'กรุณากรอกรหัสผ่าน',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              SizedBox(height: 40),
-              // ปุ่มสมัครสมาชิก
-              ElevatedButton(
-                onPressed: isLoading ? null : signup,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 55),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  backgroundColor: const Color.fromARGB(255, 11, 13, 145),
-                ),
-                child: isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
-                        'สมัครสมาชิก',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-              ),
-              SizedBox(height: 20),
-              RichText(
-                text: TextSpan(
-                  text: 'ท่านมีบัญชีแล้วใช่หรือไม่ ? ',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: 'เข้าสู่ระบบ',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: const Color.fromARGB(255, 11, 13, 145),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginUi(),
-                            ),
-                          );
-                        },
+                SizedBox(height: 40),
+                // Username
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'ชื่อผู้ใช้',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: 10),
+                TextField(
+                  controller: nameCtrl,
+                  decoration: InputDecoration(
+                    hintText: 'กรุณากรอกชื่อผู้ใช้',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Email
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'อีเมล',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    hintText: 'กรุณากรอกอีเมล',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Password
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'รหัสผ่าน',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: passwordCtrl,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    hintText: 'กรุณากรอกรหัสผ่าน',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 40),
+                // ปุ่มสมัครสมาชิก
+                ElevatedButton(
+                  onPressed: isLoading ? null : signup,
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 55),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: const Color.fromARGB(255, 11, 13, 145),
+                  ),
+                  child: isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          'สมัครสมาชิก',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+                SizedBox(height: 20),
+                RichText(
+                  text: TextSpan(
+                    text: 'ท่านมีบัญชีแล้วใช่หรือไม่ ? ',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: 'เข้าสู่ระบบ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 11, 13, 145),
+                          fontWeight: FontWeight.bold,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginUi(),
+                              ),
+                            );
+                          },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

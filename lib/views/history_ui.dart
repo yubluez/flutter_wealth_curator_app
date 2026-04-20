@@ -80,6 +80,14 @@ class _HistoryUiState extends State<HistoryUi> {
     return allTransactions;
   }
 
+  // ฟังก์ชันรีเซ็ตค่าและโหลดข้อมูลใหม่
+  Future<void> _handleRefresh() async {
+    setState(() {
+      selectedFilter = 'All'; // รีเซ็ตฟิลเตอร์กลับเป็นค่าเริ่มต้น
+    });
+    await loadData(); // ดึงข้อมูลใหม่จาก Supabase
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -90,9 +98,13 @@ class _HistoryUiState extends State<HistoryUi> {
           children: [
             _buildFilterBar(),
             Expanded(
-              child: isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : _buildTransactionList(),
+              child: RefreshIndicator(
+                onRefresh: _handleRefresh,
+                color: Color(0xFF1117D1),
+                child: isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : _buildTransactionList(),
+              ),
             ),
           ],
         ),
@@ -124,7 +136,13 @@ class _HistoryUiState extends State<HistoryUi> {
 
   Widget _buildTransactionList() {
     if (filteredTransactions.isEmpty) {
-      return Center(child: Text("ไม่มีข้อมูล"));
+      return ListView(
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(height: 100),
+          Center(child: Text("ไม่มีข้อมูล")),
+        ],
+      );
     }
 
     return ListView.builder(
@@ -164,7 +182,7 @@ class _HistoryUiState extends State<HistoryUi> {
               children: [
                 CircleAvatar(
                   backgroundColor: Colors.grey[100],
-                  // 🔹 3. เรียกใช้ฟังก์ชัน getCategoryIcon โดยส่งชื่อหมวดหมู่ที่ได้จากข้อ 1
+                  // เรียกใช้ฟังก์ชัน getCategoryIcon โดยส่งชื่อหมวดหมู่ที่ได้จากข้อ 1
                   child: Icon(
                     getCategoryIcon(category.name),
                     color: Colors.black,

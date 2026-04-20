@@ -56,6 +56,29 @@ class _HomeUiState extends State<HomeUi> {
     }
   }
 
+  IconData getCategoryIcon(String? categoryName) {
+    switch (categoryName) {
+      case 'ช้อปปิ้ง':
+        return Icons.shopping_bag;
+      case 'เดินทาง':
+        return Icons.directions_car;
+      case 'ที่พัก':
+        return Icons.hotel;
+      case 'บันเทิง':
+        return Icons.movie;
+      case 'บิล':
+        return Icons.receipt;
+      case 'สุขภาพ':
+        return Icons.health_and_safety;
+      case 'อาหาร':
+        return Icons.restaurant;
+      case 'การศึกษา':
+        return Icons.school;
+      default:
+        return Icons.receipt_long; // ไอคอนเริ่มต้นถ้าไม่ตรงกับหมวดใดเลย
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // กรณีโหลดไม่เสร็จ
@@ -73,8 +96,8 @@ class _HomeUiState extends State<HomeUi> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(errorMessage!, style: const TextStyle(color: Colors.red)),
-              ElevatedButton(onPressed: loadData, child: const Text("ลองใหม่")),
+              Text(errorMessage!, style: TextStyle(color: Colors.red)),
+              ElevatedButton(onPressed: loadData, child: Text("ลองใหม่")),
             ],
           ),
         ),
@@ -158,8 +181,10 @@ class _HomeUiState extends State<HomeUi> {
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundColor: Colors.blue.withOpacity(0.1),
-                          child: Icon(Icons.receipt_long,
-                              color: Color(0xFF1117D1)),
+                          child: Icon(
+                            getCategoryIcon(cat.name),
+                            color: Colors.black,
+                          ),
                         ),
                         title: Text(
                           t.note != null && t.note!.isNotEmpty
