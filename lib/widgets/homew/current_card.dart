@@ -20,7 +20,7 @@ class CurrentCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF1117D1),
+        color: Color(0xFF1117D1),
         borderRadius: BorderRadius.circular(25.0),
       ),
       child: Column(

@@ -19,7 +19,7 @@ class _SplashScreenUiState extends State<SplashScreenUi> {
     super.initState();
 
     Future.delayed(Duration(seconds: 3), () {
-      if (!mounted) return; // ✅ ป้องกัน error
+      if (!mounted) return;
       
       final user = Supabase.instance.client.auth.currentUser;
 

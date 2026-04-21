@@ -11,15 +11,15 @@ class HomeUi extends StatefulWidget {
   const HomeUi({super.key, this.onNavigate});
 
   @override
-  State<HomeUi> createState() => _HomeUiState();
+  State<HomeUi> createState() => HomeUiState();
 }
 
-class _HomeUiState extends State<HomeUi> {
+class HomeUiState extends State<HomeUi> {
   final SupabaseService service = SupabaseService();
   List<Transaction> allTransactions = [];
   List<Category> categories = [];
   bool isLoading = true;
-  String? errorMessage; // เพิ่มตัวแปรเก็บ Error
+  String? errorMessage;
 
   @override
   void initState() {
@@ -75,7 +75,7 @@ class _HomeUiState extends State<HomeUi> {
       case 'การศึกษา':
         return Icons.school;
       default:
-        return Icons.receipt_long; // ไอคอนเริ่มต้นถ้าไม่ตรงกับหมวดใดเลย
+        return Icons.receipt_long;
     }
   }
 
@@ -148,8 +148,7 @@ class _HomeUiState extends State<HomeUi> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   TextButton(
-                    onPressed: () =>
-                        widget.onNavigate?.call(2), // ไปหน้าประวัติ
+                    onPressed: () => widget.onNavigate?.call(2),
                     child: Text("ดูทั้งหมด"),
                   ),
                 ],

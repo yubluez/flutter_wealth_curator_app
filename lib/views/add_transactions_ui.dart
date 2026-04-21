@@ -18,10 +18,10 @@ class AddTransactionsUi extends StatefulWidget {
   const AddTransactionsUi({super.key});
 
   @override
-  State<AddTransactionsUi> createState() => _AddTransactionsUiState();
+  State<AddTransactionsUi> createState() => AddTransactionsUiState();
 }
 
-class _AddTransactionsUiState extends State<AddTransactionsUi> {
+class AddTransactionsUiState extends State<AddTransactionsUi> {
   bool isExpense = true;
   TextEditingController amountCtrl = TextEditingController();
   TextEditingController noteCtrl = TextEditingController();
@@ -47,6 +47,18 @@ class _AddTransactionsUiState extends State<AddTransactionsUi> {
   Future<void> loadCategories() async {
     final data = await SupabaseService().getCategories();
     setState(() => categories = data);
+  }
+
+  Future<void> resetForm() async {
+    setState(() {
+      isExpense = true;
+      amountCtrl.clear();
+      noteCtrl.clear();
+      selectedDateTime = null;
+      file = null;
+      selectedCategoryId = "";
+    });
+    await loadCategories(); // โหลดหมวดหมู่ใหม่เพื่อให้ข้อมูลเป็นปัจจุบัน
   }
 
   Future<void> pickImage() async {
@@ -138,7 +150,6 @@ class _AddTransactionsUiState extends State<AddTransactionsUi> {
   }
 
   Future<void> _handleRefresh() async {
-    // จำลองการโหลดข้อมูลใหม่ (ถ้ามี) หรือจะรีเซ็ตค่าเลยก็ได้
     await Future.delayed(Duration(milliseconds: 500));
 
     setState(() {
@@ -151,7 +162,6 @@ class _AddTransactionsUiState extends State<AddTransactionsUi> {
       selectedCategoryId = "";
     });
 
-    // โหลด Categories ใหม่จาก Supabase เพื่อให้ข้อมูลเป็นปัจจุบันที่สุด
     await loadCategories();
   }
 

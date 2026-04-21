@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_wealth_curator_app/models/category_model.dart';
 
 class CategoryChartCard extends StatelessWidget {
+  final String selectedType;
   final String categoryName;
   final String dateTitle;
   final double totalSpent;
@@ -10,10 +11,13 @@ class CategoryChartCard extends StatelessWidget {
   final List<Category> categories;
   final Category? selectedCategory;
   final VoidCallback onDateTap;
+  final VoidCallback onPrevious;
+  final VoidCallback onNext;
   final Function(Category?) onCategorySelected;
 
   const CategoryChartCard({
     super.key,
+    required this.selectedType,
     required this.categoryName,
     required this.dateTitle,
     required this.totalSpent,
@@ -21,6 +25,8 @@ class CategoryChartCard extends StatelessWidget {
     required this.categories,
     required this.selectedCategory,
     required this.onDateTap,
+    required this.onPrevious,
+    required this.onNext,
     required this.onCategorySelected,
   });
 
@@ -50,10 +56,8 @@ class CategoryChartCard extends StatelessWidget {
   // 🔹 ฟังก์ชันกำหนดสีตามหมวดหมู่
   Color getCategoryColor(String? name) {
     if (name == null || name == 'ทั้งหมด')
-      return const Color(0xFF1117D1); // สีน้ำเงินหลัก
+      return const Color(0xFF1117D1);
 
-    // คุณสามารถดึงค่าสีจาก cat.color ในฐานข้อมูล (ถ้ามีเก็บไว้)
-    // หรือกำหนดเงื่อนไขแบบ Manual ตามชื่อหมวดหมู่ที่นี่
     switch (name) {
       case 'ทั้งหมด':
         return const Color(0xFF1117D1);
@@ -76,6 +80,8 @@ class CategoryChartCard extends StatelessWidget {
     }
   }
 
+  Color get mainColor => selectedType == 'expense' ? Colors.red : Colors.green;
+
   @override
   Widget build(BuildContext context) {
     double percent = (totalSpent / currentBudget) * 100;
@@ -95,17 +101,29 @@ class CategoryChartCard extends StatelessWidget {
               Text(categoryName,
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.grey)),
-              GestureDetector(
-                onTap: onDateTap,
-                child: Row(
-                  children: [
-                    Text(dateTitle,
-                        style: TextStyle(
-                            color: Color(0xFF1117D1),
-                            fontWeight: FontWeight.bold)),
-                    Icon(Icons.arrow_drop_down, color: Color(0xFF1117D1)),
-                  ],
-                ),
+              Row(
+                children: [
+                  // ย้อน
+                  IconButton(
+                    icon: Icon(Icons.chevron_left),
+                    onPressed: () => onPrevious(),
+                  ),
+
+                  // วันที่
+                  Text(
+                    dateTitle,
+                    style: TextStyle(
+                      color: Color(0xFF1117D1),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  // ถัดไป
+                  IconButton(
+                    icon: Icon(Icons.chevron_right),
+                    onPressed: () => onNext(),
+                  ),
+                ],
               ),
             ],
           ),

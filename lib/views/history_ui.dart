@@ -9,14 +9,14 @@ class HistoryUi extends StatefulWidget {
   const HistoryUi({super.key});
 
   @override
-  State<HistoryUi> createState() => _HistoryUiState();
+  State<HistoryUi> createState() => HistoryUiState();
 }
 
-class _HistoryUiState extends State<HistoryUi> {
+class HistoryUiState extends State<HistoryUi> {
   final SupabaseService service = SupabaseService();
   String selectedFilter = 'All';
   List<Transaction> allTransactions = [];
-  List<Category> categories = []; // 🔹 เพิ่มตัวแปรเก็บหมวดหมู่
+  List<Category> categories = [];
   bool isLoading = true;
 
   @override
@@ -27,7 +27,7 @@ class _HistoryUiState extends State<HistoryUi> {
 
   Future<void> loadData() async {
     setState(() => isLoading = true);
-    // 🔹 ดึงทั้งรายการและหมวดหมู่มาพร้อมกัน
+    // ดึงทั้งรายการและหมวดหมู่มาพร้อมกัน
     final transData = await service.getTransactions();
     final catsData = await service.getCategories();
 
@@ -67,7 +67,7 @@ class _HistoryUiState extends State<HistoryUi> {
       case 'การศึกษา':
         return Icons.school;
       default:
-        return Icons.receipt_long; // ไอคอนเริ่มต้นถ้าไม่ตรงกับหมวดใดเลย
+        return Icons.receipt_long;
     }
   }
 
@@ -164,7 +164,6 @@ class _HistoryUiState extends State<HistoryUi> {
 
         return GestureDetector(
           onTap: () async {
-            // ไปหน้าแก้ไข และรอรับผลกลับมาเพื่อ refresh หน้า
             await Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => UpdateDeleteUi(transaction: t)),
@@ -182,7 +181,6 @@ class _HistoryUiState extends State<HistoryUi> {
               children: [
                 CircleAvatar(
                   backgroundColor: Colors.grey[100],
-                  // เรียกใช้ฟังก์ชัน getCategoryIcon โดยส่งชื่อหมวดหมู่ที่ได้จากข้อ 1
                   child: Icon(
                     getCategoryIcon(category.name),
                     color: Colors.black,

@@ -13,7 +13,7 @@ class AmountInput extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize:
-            MainAxisSize.min, // Constrains the Row to its children's size
+            MainAxisSize.min,
         children: [
           Text(
             "฿",
@@ -23,7 +23,6 @@ class AmountInput extends StatelessWidget {
             ),
           ),
           SizedBox(width: 10),
-          // Wrap with Flexible or ConstrainedBox to prevent the overflow
           Flexible(
             child: IntrinsicWidth(
               child: TextField(

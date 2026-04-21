@@ -156,7 +156,7 @@ class _ProfileUiState extends State<ProfileUi> {
                 ),
               ),
               SizedBox(height: 50),
-              // 🔹 Email
+              // Email
               ListTile(
                 leading: Icon(Icons.email),
                 title: Text('อีเมล'),
@@ -165,7 +165,7 @@ class _ProfileUiState extends State<ProfileUi> {
 
               Spacer(),
 
-              // 🔹 Logout
+              // Logout
               ElevatedButton(
                 onPressed: logout,
                 style: ElevatedButton.styleFrom(

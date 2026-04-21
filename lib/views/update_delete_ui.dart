@@ -6,10 +6,8 @@ import 'package:flutter_wealth_curator_app/services/supabase_service.dart';
 import 'package:flutter_wealth_curator_app/widgets/add/amount_input.dart';
 import 'package:flutter_wealth_curator_app/widgets/add/category_widget.dart';
 import 'package:flutter_wealth_curator_app/widgets/add/date_time_picker_box.dart';
-import 'package:flutter_wealth_curator_app/widgets/add/image_picker_box.dart';
 import 'package:flutter_wealth_curator_app/widgets/add/transaction_toggle.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 
 class UpdateDeleteUi extends StatefulWidget {
   final Transaction transaction; // รับข้อมูลตัวที่ต้องการแก้มา
@@ -142,7 +140,7 @@ class _UpdateDeleteUiState extends State<UpdateDeleteUi> {
         padding: EdgeInsets.all(20),
         child: Column(
           children: [
-            // 🔹 Toggle Expenses/Income
+            // Toggle Expenses/Income
             TransactionToggle(
               isExpense: isExpense,
               onChanged: (val) {
