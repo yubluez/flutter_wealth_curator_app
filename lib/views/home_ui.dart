@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_wealth_curator_app/controllers/behavior_controller.dart';
 import 'package:flutter_wealth_curator_app/models/category_model.dart';
 import 'package:flutter_wealth_curator_app/models/transaction_model.dart';
 import 'package:flutter_wealth_curator_app/services/supabase_service.dart';
@@ -81,6 +82,8 @@ class HomeUiState extends State<HomeUi> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BehaviorController(allTransactions);
+    final topCategory = controller.getTopCategory(categories, 'expense');
     // กรณีโหลดไม่เสร็จ
     if (isLoading) {
       return Scaffold(
@@ -128,6 +131,11 @@ class HomeUiState extends State<HomeUi> {
                 balance: income - expense,
                 income: income,
                 expense: expense,
+              ),
+              SizedBox(height: 25),
+              Text(
+                "คุณใช้เงินกับ $topCategory มากที่สุดในช่วงนี้",
+                style: TextStyle(color: Colors.grey),
               ),
               SizedBox(height: 25),
 

@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'home_ui.dart';
 import 'add_transactions_ui.dart';
 import 'history_ui.dart';
-import 'category_ui.dart';
 import 'profile_ui.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -20,7 +19,6 @@ class _MainNavigationState extends State<MainNavigation> {
   final GlobalKey<AddTransactionsUiState> _addKey =
       GlobalKey<AddTransactionsUiState>();
   final GlobalKey<HistoryUiState> _historyKey = GlobalKey<HistoryUiState>();
-  final GlobalKey<CategoryUiState> _categoryKey = GlobalKey<CategoryUiState>();
 
   final supabase = Supabase.instance.client;
   int _currentIndex = 0;
@@ -34,10 +32,6 @@ class _MainNavigationState extends State<MainNavigation> {
       HomeUi(key: _homeKey, onNavigate: _onNavigate),
       AddTransactionsUi(key: _addKey),
       HistoryUi(key: _historyKey),
-      CategoryUi(
-        key: _categoryKey,
-        onTypeChanged: (type) => setState(() => currentReportType = type),
-      ),
     ];
   }
 
@@ -140,7 +134,6 @@ class _MainNavigationState extends State<MainNavigation> {
           if (index == 0) _homeKey.currentState?.loadData();
           if (index == 1) _addKey.currentState?.resetForm();
           if (index == 2) _historyKey.currentState?.loadData();
-          if (index == 3) _categoryKey.currentState?.loadData();
         },
         items: [
           BottomNavigationBarItem(
@@ -155,10 +148,6 @@ class _MainNavigationState extends State<MainNavigation> {
             icon: FaIcon(FontAwesomeIcons.clockRotateLeft, size: 20),
             label: 'ประวัติ',
           ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.chartPie, size: 20),
-            label: 'รายงาน',
-          ),
         ],
       ),
     );
@@ -169,7 +158,10 @@ class _MainNavigationState extends State<MainNavigation> {
 
     return GestureDetector(
       onTap: () {
-        _categoryKey.currentState?.toggleType();
+        setState(() {
+          currentReportType =
+              currentReportType == 'expense' ? 'income' : 'expense';
+        });
       },
       child: AnimatedContainer(
         duration: Duration(milliseconds: 250),

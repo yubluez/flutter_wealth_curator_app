@@ -165,6 +165,12 @@ class AddTransactionsUiState extends State<AddTransactionsUi> {
     await loadCategories();
   }
 
+  List<Category> get filteredCategories {
+    final type = isExpense ? 'expense' : 'income';
+
+    return categories.where((c) => c.type == type).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,7 +196,7 @@ class AddTransactionsUiState extends State<AddTransactionsUi> {
               AmountInput(controller: amountCtrl),
               SizedBox(height: 25),
               CategoryWidget(
-                categories: categories,
+                categories: filteredCategories,
                 selectedId: selectedCategoryId,
                 onSelect: (id) => setState(() => selectedCategoryId = id),
               ),

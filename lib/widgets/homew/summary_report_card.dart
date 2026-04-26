@@ -31,9 +31,30 @@ class SummaryReportCard extends StatelessWidget {
     double totalExp = transactions
         .where((t) => t.type == 'expense')
         .fold(0, (sum, t) => sum + t.amount);
-    double budget = 10000; // สมมติงบประมาณ
-    double percent = totalExp / budget;
-    if (percent > 1) percent = 1;
+
+    double totalIncome = transactions
+        .where((t) => t.type == 'income')
+        .fold(0, (sum, t) => sum + t.amount);
+
+    double percent = 0;
+
+    if (totalIncome > 0) {
+      percent = totalExp / totalIncome;
+
+      // กันค่าเกิน 100%
+      if (percent > 1) percent = 1;
+    }
+
+    Color progressColor;
+    if (percent < 0.5) {
+      progressColor = Colors.green;
+    } else if (percent < 0.8) {
+      progressColor = Colors.orange;
+    } else {
+      progressColor = Colors.red;
+    }
+
+    double remain = (1 - percent) * 100;
 
     // คำนวณหา Top 3 หมวดหมู่
     var expGroup = <String, double>{};
@@ -51,14 +72,9 @@ class SummaryReportCard extends StatelessWidget {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("รายงาน",
+              Text("ภาพรวมการใช้จ่าย",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              GestureDetector(
-                  onTap: onViewAll,
-                  child:
-                      Text("ดูทั้งหมด", style: TextStyle(color: Colors.grey))),
             ],
           ),
           SizedBox(height: 15),
@@ -69,11 +85,16 @@ class SummaryReportCard extends StatelessWidget {
             center: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("${(percent * 100).toInt()}%",
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                Text("ของงบประมาณ",
+                Text(
+                  "${(percent * 100).toStringAsFixed(0)}%",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text("ใช้ไปจากรายรับ",
                     style: TextStyle(fontSize: 10, color: Colors.grey)),
+                Text(
+                  "เหลือ ${remain.toStringAsFixed(0)}% ของรายรับ",
+                  style: TextStyle(fontSize: 10, color: Colors.grey),
+                ),
               ],
             ),
             progressColor: Color(0xFF1117D1),

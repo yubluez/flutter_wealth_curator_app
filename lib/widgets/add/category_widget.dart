@@ -19,6 +19,7 @@ class CategoryWidget extends StatelessWidget {
 
   IconData getIcon(String? name) {
     switch (name) {
+      /// EXPENSE
       case 'ช้อปปิ้ง':
         return Icons.shopping_bag;
       case 'เดินทาง':
@@ -33,6 +34,18 @@ class CategoryWidget extends StatelessWidget {
         return Icons.health_and_safety;
       case 'อาหาร':
         return Icons.restaurant;
+
+      /// INCOME
+      case 'เงินเดือน':
+        return Icons.work;
+      case 'โบนัส':
+        return Icons.card_travel;
+      case 'ของขวัญ':
+        return Icons.card_giftcard;
+      case 'รายได้เสริม':
+        return Icons.attach_money;
+
+      /// 🔁 DEFAULT
       default:
         return Icons.category;
     }

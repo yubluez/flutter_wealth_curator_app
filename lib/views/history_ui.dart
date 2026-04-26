@@ -145,75 +145,111 @@ class HistoryUiState extends State<HistoryUi> {
       );
     }
 
-    return ListView.builder(
+    /// 🔥 1. จัดกลุ่มตามวัน
+    Map<String, List<Transaction>> grouped = {};
+
+    for (var t in filteredTransactions) {
+      String dateKey = DateFormat('dd MMM yyyy').format(t.createdAt!);
+
+      if (!grouped.containsKey(dateKey)) {
+        grouped[dateKey] = [];
+      }
+      grouped[dateKey]!.add(t);
+    }
+
+    /// 🔥 2. เรียงวันล่าสุดก่อน
+    final sortedKeys = grouped.keys.toList()
+      ..sort((a, b) => DateFormat('dd MMM yyyy')
+          .parse(b)
+          .compareTo(DateFormat('dd MMM yyyy').parse(a)));
+
+    return ListView(
       padding: EdgeInsets.only(top: 20),
-      itemCount: filteredTransactions.length,
-      itemBuilder: (context, index) {
-        final t = filteredTransactions[index];
+      children: sortedKeys.map((date) {
+        final transactions = grouped[date]!;
 
-        // 🔹 1. ค้นหาข้อมูลหมวดหมู่จากลิสต์ categories โดยใช้ catId ของ transaction
-        final category = categories.firstWhere(
-          (c) => c.id == t.catId,
-          orElse: () => Category(name: 'ทั่วไป'), // ค่าเริ่มต้นถ้าหาไม่เจอ
-        );
-
-        // 🔹 2. กำหนดชื่อที่จะแสดง (ถ้าไม่มีโน้ต ให้ใช้ชื่อหมวดหมู่ที่หามาได้)
-        final String displayName = (t.note != null && t.note!.trim().isNotEmpty)
-            ? t.note!
-            : (category.name ?? 'ทั่วไป');
-
-        return GestureDetector(
-          onTap: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => UpdateDeleteUi(transaction: t)),
-            );
-            loadData();
-          },
-          child: Container(
-            margin: EdgeInsets.only(bottom: 15),
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.grey[100],
-                  child: Icon(
-                    getCategoryIcon(category.name),
-                    color: Colors.black,
-                  ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// 🔥 หัวข้อวัน
+            Padding(
+              padding: EdgeInsets.only(bottom: 10, top: 10),
+              child: Text(
+                date,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[700],
                 ),
-                SizedBox(width: 15),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+            ),
+
+            /// 🔥 รายการในวันนั้น
+            ...transactions.map((t) {
+              final category = categories.firstWhere(
+                (c) => c.id == t.catId,
+                orElse: () => Category(name: 'ทั่วไป'),
+              );
+
+              final displayName = (t.note != null && t.note!.trim().isNotEmpty)
+                  ? t.note!
+                  : (category.name ?? 'ทั่วไป');
+
+              return GestureDetector(
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => UpdateDeleteUi(transaction: t)),
+                  );
+                  loadData();
+                },
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 15),
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
                     children: [
-                      Text(
-                        displayName,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      CircleAvatar(
+                        backgroundColor: Colors.grey[100],
+                        child: Icon(
+                          getCategoryIcon(category.name),
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(displayName,
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(
+                              DateFormat('HH:mm').format(t.createdAt!),
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       ),
                       Text(
-                        DateFormat('HH:mm • dd MMM').format(t.createdAt!),
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                        '${t.type == 'expense' ? '-' : '+'} ฿${t.amount.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color:
+                              t.type == 'expense' ? Colors.red : Colors.green,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Text(
-                  '${t.type == 'expense' ? '-' : '+'} ฿${t.amount.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: t.type == 'expense' ? Colors.red : Colors.green,
-                  ),
-                ),
-              ],
-            ),
-          ),
+              );
+            }).toList(),
+          ],
         );
-      },
+      }).toList(),
     );
   }
 }
