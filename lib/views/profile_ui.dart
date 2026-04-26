@@ -93,6 +93,7 @@ class _ProfileUiState extends State<ProfileUi> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
+        backgroundColor: Colors.white,
         body: Center(child: CircularProgressIndicator()),
       );
     }
