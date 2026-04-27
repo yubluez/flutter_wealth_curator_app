@@ -10,8 +10,8 @@
 <br/><br>
 <kbd><img width="250" alt="add" src="https://github.com/user-attachments/assets/4473d28a-b917-4774-a583-e1d4a85873fa" /></kbd>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<kbd><img width="250" alt="history" src="https://github.com/user-attachments/assets/a5f59837-7c06-4d68-8de9-38e7cc6097c2" /></kbd>
+<kbd><img width="250" alt="localhost_61618_(iPhone 14 Pro Max) (2)" src="https://github.com/user-attachments/assets/6a232d99-f8d8-4b75-bc4a-ae1556164ccd" /></kbd>
 <br/><br>
 <kbd><img width="250" alt="edit" src="https://github.com/user-attachments/assets/95e14bbc-b219-4a92-bf57-5faaa6fd9912" /></kbd>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<kbd><img width="250" alt="profile" src="https://github.com/user-attachments/assets/0cbfbc76-90b0-441f-817e-17b9c455ccce" /></kbd>
+<kbd><img width="250" alt="localhost_61618_(iPhone 14 Pro Max) (3)" src="https://github.com/user-attachments/assets/16ecfda0-b359-4990-9ec3-5e3bb5f48ee3" /></kbd>
