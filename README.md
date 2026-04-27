@@ -6,7 +6,7 @@
 <br/><br>
 <kbd><img width="250" alt="signup" src="https://github.com/user-attachments/assets/188af048-feac-4d48-8397-af03eca894eb" /></kbd>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<kbd><img width="250" alt="home" src="https://github.com/user-attachments/assets/5085d982-2b6b-4dd3-aace-df67a787b7f6" /></kbd>
+<kbd><img width="250" alt="localhost_61618_(iPhone 14 Pro Max) (1)" src="https://github.com/user-attachments/assets/d85954c7-9a95-44fb-8cee-03280c8018d3" /></kbd>
 <br/><br>
 <kbd><img width="250" alt="add" src="https://github.com/user-attachments/assets/4473d28a-b917-4774-a583-e1d4a85873fa" /></kbd>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
