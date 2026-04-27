@@ -143,7 +143,7 @@ class HomeUiState extends State<HomeUi> {
               SummaryReportCard(
                 transactions: allTransactions,
                 categories: categories,
-                onViewAll: () => widget.onNavigate?.call(3), // ไปที่หน้ารายงาน
+                topCategory: topCategory,
               ),
               SizedBox(height: 25),
 

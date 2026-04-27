@@ -1,144 +1,197 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_wealth_curator_app/models/category_model.dart';
-import 'package:flutter_wealth_curator_app/models/transaction_model.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 
-class SummaryReportCard extends StatelessWidget {
-  final List<Transaction> transactions;
-  final List<Category> categories;
-  final VoidCallback onViewAll;
+class SummaryReportCard extends StatefulWidget {
+  final List<dynamic> transactions;
+  final List<dynamic> categories;
+  final String topCategory;
 
-  const SummaryReportCard(
-      {super.key,
-      required this.transactions,
-      required this.categories,
-      required this.onViewAll});
+  const SummaryReportCard({
+    super.key,
+    required this.transactions,
+    required this.categories,
+    required this.topCategory,
+  });
 
-  // 🔹 เพิ่มฟังก์ชันแปลง Hex String เป็น Color (เหมือนที่คุณใช้ในหน้าอื่น)
-  Color hexToColor(String? hex) {
-    if (hex == null || hex.isEmpty)
-      return Colors.grey; // สีเริ่มต้นถ้าไม่มีข้อมูล
-    try {
-      return Color(int.parse(hex));
-    } catch (e) {
-      return Colors.grey;
-    }
+  @override
+  State<SummaryReportCard> createState() => _SummaryReportCardState();
+}
+
+class _SummaryReportCardState extends State<SummaryReportCard> {
+  bool isExpanded = false;
+
+  Color hexToColor(String hex) {
+    return Color(int.parse(hex));
   }
 
   @override
   Widget build(BuildContext context) {
-    double totalExp = transactions
+    /// 🔥 รวมรายจ่าย
+    double totalExp = widget.transactions
         .where((t) => t.type == 'expense')
         .fold(0, (sum, t) => sum + t.amount);
 
-    double totalIncome = transactions
+    /// 🔥 รวมรายรับ
+    double totalIncome = widget.transactions
         .where((t) => t.type == 'income')
         .fold(0, (sum, t) => sum + t.amount);
 
+    /// 🔥 % จริง
     double percent = 0;
-
     if (totalIncome > 0) {
       percent = totalExp / totalIncome;
-
-      // กันค่าเกิน 100%
       if (percent > 1) percent = 1;
-    }
-
-    Color progressColor;
-    if (percent < 0.5) {
-      progressColor = Colors.green;
-    } else if (percent < 0.8) {
-      progressColor = Colors.orange;
-    } else {
-      progressColor = Colors.red;
     }
 
     double remain = (1 - percent) * 100;
 
-    // คำนวณหา Top 3 หมวดหมู่
+    /// 🔥 group ตามหมวด
     var expGroup = <String, double>{};
-    for (var t in transactions.where((t) => t.type == 'expense')) {
+
+    for (var t in widget.transactions.where((t) => t.type == 'expense')) {
       expGroup[t.catId] = (expGroup[t.catId] ?? 0) + t.amount;
     }
+
+    /// 🔥 sort
     var sortedCats = expGroup.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    var top3 = sortedCats.take(3).toList();
+
+    final top3 = sortedCats.take(3).toList();
+    final displayList = isExpanded ? sortedCats : top3;
 
     return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(25)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// 🔝 TITLE
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("ภาพรวมการใช้จ่าย",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(
+                "ภาพรวมการใช้จ่าย",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              Text(
+                "ใช้มากสุด: ${widget.topCategory}",
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+              ),
             ],
           ),
-          SizedBox(height: 15),
-          CircularPercentIndicator(
-            radius: 80.0,
-            lineWidth: 12.0,
-            percent: percent,
-            center: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          SizedBox(height: 5),
+
+          SizedBox(height: 20),
+
+          /// 🔥 วงกลม %
+          Center(
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                Text(
-                  "${(percent * 100).toStringAsFixed(0)}%",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: CircularProgressIndicator(
+                    value: percent,
+                    strokeWidth: 10,
+                    backgroundColor: Colors.grey[200],
+                    color: Colors.blue,
+                  ),
                 ),
-                Text("ใช้ไปจากรายรับ",
-                    style: TextStyle(fontSize: 10, color: Colors.grey)),
-                Text(
-                  "เหลือ ${remain.toStringAsFixed(0)}% ของรายรับ",
-                  style: TextStyle(fontSize: 10, color: Colors.grey),
-                ),
+                Column(
+                  children: [
+                    Text(
+                      "${(percent * 100).toStringAsFixed(0)}%",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "ใช้ไปจากรายรับ",
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    Text(
+                      "เหลือ ${remain.toStringAsFixed(0)}%",
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                )
               ],
             ),
-            progressColor: Color(0xFF1117D1),
-            backgroundColor: Colors.grey.shade200,
-            circularStrokeCap: CircularStrokeCap.round,
           ),
-          SizedBox(height: 25),
-          ...top3.map((entry) {
-            final cat = categories.firstWhere((c) => c.id == entry.key,
-                orElse: () => Category(name: "อื่นๆ"));
 
-            double catPercent = totalExp > 0 ? entry.value / totalExp : 0;
+          SizedBox(height: 20),
 
-            // ดึงสีประจำหมวดหมู่มาใช้
-            final Color categoryColor = hexToColor(cat.color);
+          /// 🔥 LIST (Top3 / All)
+          AnimatedSize(
+            duration: Duration(milliseconds: 300),
+            child: Column(
+              children: displayList.map((entry) {
+                final category =
+                    widget.categories.where((c) => c.id == entry.key).toList();
 
-            return Padding(
-              padding: EdgeInsets.only(bottom: 15),
-              child: Column(
-                children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(cat.name ?? "",
-                            style: TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.w500)),
-                        Text("${(catPercent * 100).toInt()}%",
-                            style: TextStyle(fontSize: 12, color: Colors.grey)),
-                      ]),
-                  SizedBox(height: 6),
-                  LinearPercentIndicator(
-                    lineHeight: 10.0,
-                    percent: catPercent,
-                    backgroundColor: Colors.grey.shade100,
-                    progressColor: categoryColor,
-                    barRadius: Radius.circular(10),
-                    padding: EdgeInsets.zero,
-                    animation: true,
-                    animationDuration: 1000,
+                final cat = category.isNotEmpty ? category.first : null;
+
+                final percentCat = totalExp > 0
+                    ? (entry.value / totalExp).clamp(0.0, 1.0)
+                    : 0.0;
+
+                final color = cat != null && cat.color != null
+                    ? hexToColor(cat.color!)
+                    : Colors.grey;
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(cat?.name ?? "อื่นๆ"),
+                          Text(
+                            "${(percentCat * 100).toStringAsFixed(1)}%",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: LinearProgressIndicator(
+                          value: percentCat,
+                          minHeight: 8,
+                          backgroundColor: Colors.grey[200],
+                          valueColor: AlwaysStoppedAnimation<Color>(color),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                );
+              }).toList(),
+            ),
+          ),
+
+          /// 🔥 ปุ่ม expand
+          if (sortedCats.length > 3)
+            Center(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isExpanded = !isExpanded;
+                  });
+                },
+                child: Text(
+                  isExpanded ? "ย่อกลับ" : "ดูทั้งหมด",
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            );
-          }).toList(),
+            ),
         ],
       ),
     );
