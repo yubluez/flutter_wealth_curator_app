@@ -24,6 +24,7 @@ class _UpdateDeleteUiState extends State<UpdateDeleteUi> {
   late bool isExpense;
   late String selectedCategoryId;
   late DateTime selectedDateTime;
+  bool isDeletedImage = false;
 
   List<Category> categories = [];
   bool isLoading = false;
@@ -48,11 +49,44 @@ class _UpdateDeleteUiState extends State<UpdateDeleteUi> {
     setState(() => categories = data);
   }
 
-  Future<void> pickImage() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      setState(() => file = File(picked.path));
-    }
+  Future<void> pickImageOption() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text("ถ่ายรูป"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.camera,
+                  );
+                  if (picked != null) {
+                    setState(() => file = File(picked.path));
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo),
+                title: Text("เลือกจากอัลบั้ม"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.gallery,
+                  );
+                  if (picked != null) {
+                    setState(() => file = File(picked.path));
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> pickDateTime() async {
@@ -185,37 +219,76 @@ class _UpdateDeleteUiState extends State<UpdateDeleteUi> {
             ),
             SizedBox(height: 20),
             GestureDetector(
-              onTap: pickImage,
-              child: Container(
-                height: 140,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: file != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.file(file!,
-                            fit: BoxFit.cover), // 1. โชว์รูปใหม่ที่เพิ่งเลือก
-                      )
-                    : (widget.transaction.imageUrl != null &&
-                            widget.transaction.imageUrl!.isNotEmpty)
+              onTap: () {
+                if (file != null ||
+                    (widget.transaction.imageUrl != null && !isDeletedImage)) {
+                  // 👉 ดูรูปเต็ม
+                  showDialog(
+                    context: context,
+                    builder: (_) => Dialog(
+                      child: file != null
+                          ? Image.file(file!)
+                          : Image.network(widget.transaction.imageUrl!),
+                    ),
+                  );
+                } else {
+                  pickImageOption();
+                }
+              },
+              child: Stack(
+                children: [
+                  Container(
+                    height: 140,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: file != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              widget.transaction
-                                  .imageUrl!, // 2. โชว์รูปเดิมจาก Database
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Center(
-                                      child:
-                                          Icon(Icons.broken_image, size: 40)),
-                            ),
+                            child: Image.file(file!, fit: BoxFit.cover),
                           )
-                        : Center(
-                            child: Icon(Icons.camera_alt,
-                                size: 40)), // 3. ถ้าไม่มีทั้งคู่ โชว์ไอคอนกล้อง
+                        : (!isDeletedImage &&
+                                widget.transaction.imageUrl != null &&
+                                widget.transaction.imageUrl!.isNotEmpty)
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.network(
+                                  widget.transaction.imageUrl!,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Center(child: Icon(Icons.camera_alt, size: 40)),
+                  ),
+
+                  /// 🔴 ปุ่มลบ
+                  if (file != null ||
+                      (!isDeletedImage &&
+                          widget.transaction.imageUrl != null &&
+                          widget.transaction.imageUrl!.isNotEmpty))
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            file = null;
+                            isDeletedImage = true;
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            shape: BoxShape.circle,
+                          ),
+                          padding: EdgeInsets.all(6),
+                          child:
+                              Icon(Icons.close, color: Colors.white, size: 18),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             SizedBox(height: 35),
