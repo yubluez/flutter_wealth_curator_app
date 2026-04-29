@@ -133,11 +133,6 @@ class HomeUiState extends State<HomeUi> {
                 expense: expense,
               ),
               SizedBox(height: 25),
-              Text(
-                "คุณใช้เงินกับ $topCategory มากที่สุดในช่วงนี้",
-                style: TextStyle(color: Colors.grey),
-              ),
-              SizedBox(height: 25),
 
               // ส่วนรายงานกราฟ
               SummaryReportCard(

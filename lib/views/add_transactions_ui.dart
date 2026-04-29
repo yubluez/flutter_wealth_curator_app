@@ -61,11 +61,44 @@ class AddTransactionsUiState extends State<AddTransactionsUi> {
     await loadCategories(); // โหลดหมวดหมู่ใหม่เพื่อให้ข้อมูลเป็นปัจจุบัน
   }
 
-  Future<void> pickImage() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      setState(() => file = File(picked.path));
-    }
+  Future<void> pickImageOption() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text("ถ่ายรูป"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.camera,
+                  );
+                  if (picked != null) {
+                    setState(() => file = File(picked.path));
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo),
+                title: Text("เลือกจากอัลบั้ม"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.gallery,
+                  );
+                  if (picked != null) {
+                    setState(() => file = File(picked.path));
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> pickDateTime() async {
@@ -222,7 +255,10 @@ class AddTransactionsUiState extends State<AddTransactionsUi> {
               SizedBox(height: 20),
               ImagePickerBox(
                 file: file,
-                onTap: pickImage,
+                onTap: pickImageOption,
+                onDelete: () {
+                  setState(() => file = null);
+                },
               ),
               SizedBox(height: 30),
               ElevatedButton(
