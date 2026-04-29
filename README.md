@@ -6,12 +6,12 @@
 <br/><br>
 <kbd><img width="250" alt="signup" src="https://github.com/user-attachments/assets/188af048-feac-4d48-8397-af03eca894eb" /></kbd>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<kbd><img width="250" alt="localhost_61618_(iPhone 14 Pro Max) (1)" src="https://github.com/user-attachments/assets/d85954c7-9a95-44fb-8cee-03280c8018d3" /></kbd>
+<kbd><img width="250" alt="localhost_63880_(iPhone 14 Pro Max)" src="https://github.com/user-attachments/assets/0d28cd72-c1cc-4376-8d61-9253685e3667" /></kbd>
 <br/><br>
 <kbd><img width="250" alt="localhost_61618_(iPhone 14 Pro Max) (4)" src="https://github.com/user-attachments/assets/2a077dee-0bc8-4bca-a509-7a19cc8e91a3" /></kbd>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <kbd><img width="250" alt="localhost_61618_(iPhone 14 Pro Max) (2)" src="https://github.com/user-attachments/assets/6a232d99-f8d8-4b75-bc4a-ae1556164ccd" /></kbd>
 <br/><br>
-<kbd><img width="250" alt="edit" src="https://github.com/user-attachments/assets/95e14bbc-b219-4a92-bf57-5faaa6fd9912" /></kbd>
+<kbd><img width="250" alt="localhost_63880_(iPhone 14 Pro Max) (1)" src="https://github.com/user-attachments/assets/42550112-d417-4334-b008-255e6dbcd678" /></kbd>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <kbd><img width="250" alt="localhost_61618_(iPhone 14 Pro Max) (3)" src="https://github.com/user-attachments/assets/16ecfda0-b359-4990-9ec3-5e3bb5f48ee3" /></kbd>
