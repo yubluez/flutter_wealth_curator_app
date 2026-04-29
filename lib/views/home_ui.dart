@@ -133,14 +133,13 @@ class HomeUiState extends State<HomeUi> {
                 expense: expense,
               ),
               SizedBox(height: 25),
-
               // ส่วนรายงานกราฟ
               SummaryReportCard(
                 transactions: allTransactions,
                 categories: categories,
                 topCategory: topCategory,
               ),
-              SizedBox(height: 25),
+              SizedBox(height: 15),
 
               // ส่วนประวัติล่าสุด
               Row(
@@ -214,7 +213,7 @@ class HomeUiState extends State<HomeUi> {
                     );
                   },
                 ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
             ],
           ),
         ),
